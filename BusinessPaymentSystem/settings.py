@@ -144,6 +144,12 @@ PAYSTACK_PUBLIC_KEY = "pk_test_44d8117183b687563c885f124e577195bb00b96b"
 PAYSTACK_BASE_URL = "https://api.paystack.co/transaction"
 
 
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
+    }
+}
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
