@@ -11,6 +11,7 @@ class Business(AbstractBaseModel):
     location = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     country = models.CharField(max_length=255)
+    description = models.TextField(null=True)
     active = models.BooleanField(default=False)
 
     def __str__(self):
