@@ -42,23 +42,18 @@ class SubscriptionPackage(AbstractBaseModel):
 
 
 class Subscription(AbstractBaseModel):
-    business = models.ForeignKey(
-        "businesses.Business", on_delete=models.CASCADE, null=True
-    )
-    business_branch = models.ForeignKey(
-        "businesses.BusinessBranch", on_delete=models.SET_NULL, null=True
-    )
-    subscription_package = models.ForeignKey(
-        SubscriptionPackage, on_delete=models.SET_NULL, null=True
-    )
+    business = models.ForeignKey("businesses.Business", on_delete=models.CASCADE, null=True)
+    business_branch = models.ForeignKey("businesses.BusinessBranch", on_delete=models.SET_NULL, null=True)
+    subscription_package = models.ForeignKey(SubscriptionPackage, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
     active = models.BooleanField(default=False)
     payment_link = models.URLField(null=True)
-    subscription_type = models.CharField(
-        max_length=255, choices=SUBSCRIPTION_TYPES, default="Business Subscription"
-    )
+    subscription_type = models.CharField(max_length=255, choices=SUBSCRIPTION_TYPES, default="Business Subscription")
+    subscription_code = models.CharField(max_length=255, null=True)
+    authorization_url = models.URLField(null=True)
+
 
     def __str__(self):
         return self.business.name
@@ -71,9 +66,7 @@ class SubscriptionPayment(AbstractBaseModel):
     amount_expected = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     amount_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     date_expected = models.DateField(null=True)
-    payment_status = models.CharField(
-        max_length=255, choices=PAYMENT_STATUSES, default="Pending"
-    )
+    payment_status = models.CharField(max_length=255, choices=PAYMENT_STATUSES, default="Pending")
     payment_link = models.URLField(null=True)
 
     def __str__(self):

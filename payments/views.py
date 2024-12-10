@@ -102,10 +102,11 @@ class SubscribeAPIView(generics.CreateAPIView):
     serializer_class = BusinessSubscriptionSerializer
     permission_classes = [IsAuthenticated, IsBusinessOwner]
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         data = request.data
         user = request.user
-
+        
         serializer = self.serializer_class(data=data)
         if serializer.is_valid(raise_exception=True):
             business_id = serializer.validated_data.get("business")
@@ -114,19 +115,45 @@ class SubscribeAPIView(generics.CreateAPIView):
             business = Business.objects.get(id=business_id)
             package = SubscriptionPackage.objects.get(id=package_id)
 
-            business.subscription_package = package
-            business.save()
+            try:
+                subscription = Subscription.objects.create(
+                    business=business,
+                    subscription_package=package,
+                    amount=package.cost,
+                    subscription_type="Business Subscription"
+                )
+                payment = SubscriptionPayment.objects.create(
+                    subscription=subscription,
+                    payer=user,
+                    payment_status="Pending",
+                    amount_expected=subscription.amount
+                )
+                paystack = PaystackInterface()
+                x = paystack.initialize_payment(
+                    id=payment.id,
+                    email=user.email,
+                    amount=int(subscription.amount),
+                    plan_code=package.plan_code,
+                    customer_code=business.paystack_customer_code
+                )
 
-            subscription = Subscription.objects.create(
-                business=business,
-                subscription_package=package,
-                amount=package.cost,
-                subscription_type="Business Subscription",
-            )
+                print(x)
 
-            return Response(
-                {"success": "Subscribed successfully!!"}, status=status.HTTP_201_CREATED
-            )
+                authorization_url = x.get("authorization_url")
+                reference = x.get("reference")
+
+                if authorization_url and reference:
+                    subscription.authorization_url = authorization_url
+                    subscription.save()
+                    payment.payment_reference = reference
+                    payment.save()
+
+                    return Response(
+                        {"success": "Subscribed successfully!!"}, status=status.HTTP_201_CREATED
+                    )
+                return Response({ "failed": "Subscription failed, try again" }, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                raise e
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

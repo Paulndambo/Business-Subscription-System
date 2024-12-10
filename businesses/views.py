@@ -10,7 +10,7 @@ from businesses.serializers import BusinessSerializer, BusinessBranchSerializer
 
 from payments.models import SubscriptionPayment
 
-from payments.models import Subscription
+from payments.models import Subscription, SubscriptionPackage
 from businesses.permissions import IsBusinessOwner
 
 from payments.generate_payment_links import generate_payment_link
