@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 from payments.models import SubscriptionPackage, Subscription, SubscriptionPayment
+
+
 # Register your models here.
 @admin.register(SubscriptionPackage)
 class SubscriptionPackageAdmin(admin.ModelAdmin):
@@ -14,4 +16,11 @@ class SubscriptionAdmin(admin.ModelAdmin):
 
 @admin.register(SubscriptionPayment)
 class SubscriptionPaymentAdmin(admin.ModelAdmin):
-    list_display = ["id", "subscription", "payment_reference", "amount_expected", "amount_paid", "payment_status"]
+    list_display = [
+        "id",
+        "subscription",
+        "payment_reference",
+        "amount_expected",
+        "amount_paid",
+        "payment_status",
+    ]

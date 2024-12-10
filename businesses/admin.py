@@ -1,6 +1,8 @@
 from django.contrib import admin
 
 from businesses.models import Business, BusinessBranch
+
+
 # Register your models here.
 @admin.register(Business)
 class BusinessAdmin(admin.ModelAdmin):
@@ -10,4 +12,3 @@ class BusinessAdmin(admin.ModelAdmin):
 @admin.register(BusinessBranch)
 class BusinessBranchAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "business", "subscription_package", "active"]
-
